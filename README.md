@@ -1,43 +1,54 @@
 # HACKATHON1-CNA
-NDVI Land Cover Classification – Summer Analytics Hackathon 2025
-🚩 Project Overview
-This repository contains my solution for the Summer Analytics Mid Hackathon 2025. The task was to classify land cover types using time-series NDVI satellite data, with a focus on robust feature engineering and only multiclass logistic regression models, as required by the competition rules.
+🌱 NDVI Land Cover Classification – Summer Analytics Hackathon 2025
+🚀 Overview
+This repository contains my end-to-end solution for the Summer Analytics Mid Hackathon 2025, where the goal was to classify land cover types using multi-temporal NDVI (Normalized Difference Vegetation Index) satellite data. The challenge was made more interesting by the constraint: only multiclass logistic regression models were allowed.
 
-🌱 Problem Statement
-Given multi-temporal NDVI data for various locations, the challenge is to accurately predict the land cover class (e.g., forest, farm, grass, water, orchard, impervious) for each test sample. The dataset is highly imbalanced, with some classes (like orchard and water) being rare.
+🗂️ Problem Statement
+Given time-series NDVI data for thousands of locations, predict the correct land cover class (e.g., forest, farm, grass, water, orchard, impervious) for each test sample. The dataset is highly imbalanced, with some classes (like orchard and water) being extremely rare.
 
-🛠️ Solution Approach
-Data Cleaning:
+🛠️ Approach
+1. Data Cleaning
+NDVI Rescaling: Converted raw NDVI values to the [-1, 1] range.
 
-Rescaled NDVI values to [-1, 1]
+Outlier Handling: Capped NDVI values to plausible vegetation ranges ([-0.2, 0.9]).
 
-Interpolated missing values and smoothed outliers
+Missing Value Imputation: Used a combination of median neighbor filling and linear interpolation to address missing or abnormal values.
 
-Capped NDVI values to plausible vegetation ranges
+2. Feature Engineering
+Seasonal Features: Computed mean, standard deviation, max, min, and amplitude for each season (Winter, Spring, Summer, Fall) and for each year.
 
-Feature Engineering:
+Trend Features: Calculated NDVI slope (trend), peak, trough, and overall amplitude for each sample.
 
-Computed fine-grained monthly and seasonal statistics (mean, std, max, min, amplitude)
+Polynomial Features: Added interaction and squared terms to help logistic regression capture non-linear relationships.
 
-Calculated temporal trends (NDVI slope, peak, trough, amplitude)
+(Advanced versions): Included monthly stats, NDVI differences between time points, and NDVI entropy as texture features.
 
-Added polynomial and interaction features to capture non-linear relationships
+3. Modeling
+Multiclass Logistic Regression: Used multinomial logistic regression with class_weight='balanced' to address class imbalance.
 
-Included temporal difference and phenological integral features
+Pipeline: Combined scaling, feature selection (L1-based), and polynomial feature expansion in a single scikit-learn pipeline.
 
-Modeling:
+Hyperparameter Tuning: Grid-searched over regularization strength (C) and iteration limits (max_iter) using stratified cross-validation.
 
-Used multinomial logistic regression with class weighting to handle imbalance
+4. Submission
+Generated predictions for the test set and formatted them for Kaggle submission as submission_results.csv.
 
-Applied feature scaling and L1-based feature selection
+📊 Results
+Metric	Score
+Public Leaderboard	0.70
+Private Leaderboard	0.63
+Baseline (raw NDVI + logistic regression): ~0.37
 
-Hyperparameter tuning via GridSearchCV with stratified folds
+💡 Key Learnings
+Feature engineering is king: Extracting seasonal, trend, and interaction features from NDVI time series is essential for strong performance with linear models.
 
-Submission:
+Class imbalance is tough: Even with class weighting, rare classes remain challenging for logistic regression.
 
-Generated predictions for the test set and formatted them for Kaggle submission
+Model limitations: Logistic regression is robust and interpretable, but cannot capture all the complexity in multi-temporal satellite data. Higher accuracy would require tree-based or deep learning models, which were not allowed here.
 
-📈 Results
-Public Leaderboard Score: 0.84 (as of latest submission)
+Reproducibility: The pipeline is fully reproducible and ready for extension or adaptation.
+👤 Author
+Sukhjot Singh
 
-Significant improvement over baseline logistic regression (0.37) due to advanced feature engineering
+📝 Acknowledgments
+Thanks to the Summer Analytics Hackathon organizers and the Kaggle community.
